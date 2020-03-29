@@ -1,5 +1,3 @@
-# fastai_docs
+# fastai_dev
 
-The documentation has been merged with https://github.com/fastai/fastai.
-
-This repo is only used for some experimentation/dev notebooks. 
+This repo is used for fastai development. If you're looking for the version 2 of the fastai library, go [here](https://github.com/fastai/fastai2).

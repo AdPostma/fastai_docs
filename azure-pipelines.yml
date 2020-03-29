@@ -39,8 +39,18 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
 
+    # Install nbformat
+  - script: |
+      pip install nbformat ipykernel notebook matplotlib pandas requests pyyaml fastprogress pillow scipy numpy typeguard
+      pip install git+https://github.com/fastai/nbdev.git
+    displayName: 'Install nbformat'
+    continueOnError: false
+    
     # check that notebooks are stripped out. if they aren't that means the committer doesn't have the correct configuration for the stripout filter.
   - script: |
+      echo "Trying to load all notebooks"
+      tools/read-nbs
+
       echo "Check we are starting with clean git checkout"
       if [ -n "$(git status -uno -s)" ]; then echo "git status is not clean"; false; fi
 
@@ -51,4 +61,14 @@ jobs:
       git status -s # display the status to see which nbs need cleaning up
       if [ -n "$(git status -uno -s)" ]; then echo -e "!!! Detected unstripped out notebooks\n!!!Remember to run tools/run-after-git-clone"; false; fi
     displayName: 'Detect unstripped out notebook commits'
+    failOnStderr: true
+    continueOnError: false
+    
+    # check that there is no diff notebooks/module.
+  - script: |
+      echo "Diff nbs/module"
+      pushd dev
+      if [ -n "$(tools/diff_nb_script)" ]; then echo -e "!!! Diff between nbs and scripts\n!!!Remember to run notebook2script.py or script2notebook.py"; false; fi
+    displayName: 'Detect diff module/nbs'
+    failOnStderr: true
     continueOnError: false
